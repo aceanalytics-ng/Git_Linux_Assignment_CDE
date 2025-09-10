@@ -2,7 +2,6 @@
 
 This project demonstrates the implementation of a simple **ETL (Extract, Transform, Load) pipeline** and related automation tasks using **Bash scripting** on a Linux environment.  
 The assignment also covers scheduling jobs with **cron**, organizing data files, and loading competitor data into a **PostgreSQL database** for analysis.  
-All tasks are documented and structured to reflect real-world data engineering practices.  
 
 ---
 
@@ -60,4 +59,4 @@ The ingestion process for the **Parch & Posey** dataset is handled by [parch_pos
   - `ddl_tables.sql` → defines all necessary tables  
 - The Bash script iterates through each CSV file, downloads it if missing, and uses the `psql` command to load the data.  
 
-The queries requested by **Manager Ayoola** are written in [sql_answers.sql](./sql_scripts/sql_answers.sql) with comments for clarity.  
+The queries requested by **Manager Idowu** are written in [sql_answers.sql](./sql_scripts/sql_answers.sql) with comments for clarity.  
