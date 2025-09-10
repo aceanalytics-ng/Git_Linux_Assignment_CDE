@@ -1,41 +1,62 @@
-# Linux ETL Assignment
+# Linux ETL Assignment  
 
-## Architectural Diagram
-![Architecture](./artifacts/images/etl.png)
+This project demonstrates the implementation of a simple **ETL (Extract, Transform, Load) pipeline** and related automation tasks using **Bash scripting** on a Linux environment.  
+The assignment also covers scheduling jobs with **cron**, organizing data files, and loading competitor data into a **PostgreSQL database** for analysis.  
 
-# Documentation
-## Question 1
+---
 
-Find the script [here](./scripts/bash_scripts/etl.sh)
-The URL of the file to be downloaded is retrieved from the .env file.
+## ETL Architecture  
+![Architectural Diagram](./etl_architecture.png)  
 
-### Extract
-The extract destination folder is created, then checks if files exists. If file does not exist, proceed to download, else we exit the code.
+## Documentation  
 
-### Transform
-After ensuring that the transformed destination folder exists, `sed` command is used to rename columns `Variable_code` to `variable_code`. Then use `awk` command to select specific columns onlyand redirect the result to a file using `>`. Then validation is done to confirm the error code returned in a zero error code and that the transformed file exists.
+### **Task 1: ETL Script**  
+The Bash script for this task can be found [here](./bash_scripts/etl.sh).  
+The dataset URL is stored inside a `.env` file for easy reference.  
 
-### Load
-After ensuring that the gold destination folder exists. Then the transformed file is copied to the gold layer folder. Validation is done to confirm the error code returned in a zero error code and that the transformed file exists.
+#### **Extract Phase**  
+- A `raw` directory is created to store the downloaded file.  
+- The script checks if the file already exists; if not, it downloads it.  
+- If the file is present, the script exits gracefully.  
 
-## Question 2
-To schedule the script to run at 12:00 AM daily. The crontab linux command is used with a cron expression `0 0 * * *`. In the [schedule_etl.sh](./scripts/bash_scripts/schedule_etl.sh) script, we get the path of the script to be run, couple it with the cron expression and then adds it to the existing crontab list for the user.
+#### **Transform Phase**  
+- A `transformed` directory is created if missing.  
+- The script uses the `sed` command to rename the column `Variable_code` → `variable_code`.  
+- With `awk`, only four columns are kept: `year`, `Value`, `Units`, `variable_code`.  
+- The transformed dataset is saved as `2023_year_finance.csv` inside the `transformed` folder.  
+- Validation ensures the transformation was successful and the file exists.  
 
-Find the script [here](./scripts/bash_scripts/schedule_etl.sh)
+#### **Load Phase**  
+- A `gold` directory is created if missing.  
+- The transformed file is copied into this folder.  
+- Checks confirm the file was successfully loaded into the `gold` layer.  
 
-## Question 3
-The script [move_json_and_csv.sh](./scripts/bash_scripts/move_json_and_csv.sh) takes only the source folder we want to move the csv and json files from and hve the destination folder `json_and_CSV` in the script.
+---
 
-It created the destination folder if not exist and moves all .csv & .json from from the souce folder to the target/destination folder.
+### **Task 2: Scheduling with Cron**  
+The ETL pipeline is scheduled to run daily at **12:00 AM** using cron jobs.  
+- The cron expression used: `0 0 * * *`  
+- The script [schedule_etl.sh](./bash_scripts/schedule_etl.sh) dynamically retrieves the ETL script path and appends it to the crontab schedule.  
 
+---
 
-Find the script [here](./scripts/bash_scripts/move_json_and_csv.sh)
+### **Task 3: Moving JSON and CSV Files**  
+The script [move_json_and_csv.sh](./bash_scripts/move_json_and_csv.sh):  
+- Accepts a source directory containing JSON and CSV files.  
+- Creates a destination folder named `json_and_CSV` (if it doesn’t already exist).  
+- Moves all `.json` and `.csv` files from the source into the destination folder.  
 
-## Question 4
-In the script, we have an array, containing the URL's of all files we want to fetch. In the folder [here](./scripts/sql_scripts/), we have 3 sql scripts, 1 to create the databas `posey`, another to create a postgres schema, named `posey`, and lastly another to contain all the DDL's for needed tables.
-First we create all these needed database object, then use a for loop to iteratively go over the array, check if the file is exisitng and download incase its not, then proceed to looad the data into a postgres table using psql command line tool.
+---
 
-The sql script for the question asked by Manager Ayoola, can be found [here](./scripts/sql_scripts/sql_answers.sql)
+### **Task 4: Parch & Posey Data Loading and Queries**  
+The ingestion process for the **Parch & Posey** dataset is handled by [parch_posey_postgres_ingest.sh](./bash_scripts/parch_posey_postgres_ingest.sh).  
 
+- An array stores the URLs for each dataset file.  
+- A PostgreSQL database named `posey` is created.  
+- Supporting SQL files are located in [sql_scripts](./sql_scripts/):  
+  - `create_database.sql` → sets up the `posey` database  
+  - `create_schema.sql` → creates the schema inside PostgreSQL  
+  - `ddl_tables.sql` → defines all necessary tables  
+- The Bash script iterates through each CSV file, downloads it if missing, and uses the `psql` command to load the data.  
 
-Find the script [here](./scripts/bash_scripts/parch_posey_postgres_ingest.sh)
+The queries requested by **Manager Idowu** are written in [sql_answers.sql](./sql_scripts/sql_answers.sql) with comments for clarity.  
