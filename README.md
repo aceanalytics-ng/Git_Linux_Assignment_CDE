@@ -7,7 +7,7 @@ All tasks are documented and structured to reflect real-world data engineering p
 ---
 
 ## ETL Architecture  
-![Architectural Diagram](./etl.png)  
+![Architectural Diagram](./ETL Architecture.png)  
 
 ## Documentation  
 
